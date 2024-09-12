@@ -37,21 +37,31 @@ public class MainActivity extends AppCompatActivity {
         btHomem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                calcularIMC();
+
+                double imc = calcularIMC();
+                definirIMCHomem(imc);
             }
         });
 
     }
 
-    private void calcularIMC(){
+    private void definirIMCHomem(double imc) {
+        String mensagem = "";
+        if(imc < 20.7){
+            mensagem = "Abaixo do Peso.";
+        }
+
+        tvResultado.setText("O IMC é: "+imc+"\n"+mensagem);
+    }
+
+    private double calcularIMC(){
 
         /*retornando texto do campo editText e
           convertendo em int (Integer.parseInt)*/
         int peso = Integer.parseInt(edPeso.getText().toString());
         double altura = Double.parseDouble(edAltura.getText().toString());
         double imc = peso / (altura * altura);
-        tvResultado.setText("O IMC é: "+imc);
-
+        return imc;
     }
 
 
