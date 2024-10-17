@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         if(imc < 20.7){
             mensagem = "Abaixo do Peso.";
         }
+        String email = "";
 
         tvResultado.setText("O IMC é: "+imc+"\n"+mensagem);
     }
