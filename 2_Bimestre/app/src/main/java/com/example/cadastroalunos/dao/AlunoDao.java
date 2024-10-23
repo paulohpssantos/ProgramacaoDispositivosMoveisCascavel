@@ -2,6 +2,7 @@ package com.example.cadastroalunos.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -83,11 +84,13 @@ public class AlunoDao implements IGenericDao<Aluno>{
             ContentValues valores = new ContentValues();
             valores.put(colunas[1], obj.getNome());
 
-            String[]identificador = {String.valueOf(obj.getRa())};
+            String[]identificador =
+                    {String.valueOf(obj.getRa())};
 
             return baseDados.update(tabela,
                     valores,
-                    colunas[0]+"= ?",identificador);
+                    colunas[0]+"= ?",
+                    identificador);
 
         }catch (SQLException ex){
             Log.e("UNIPAR",
@@ -99,16 +102,75 @@ public class AlunoDao implements IGenericDao<Aluno>{
 
     @Override
     public long delete(Aluno obj) {
+        try{
+            String[]identificador =
+                    {String.valueOf(obj.getRa())};
+
+            return baseDados.delete(tabela,
+                    colunas[0]+" = ?",
+                    identificador);
+
+        }catch (SQLException ex){
+            Log.e("UNIPAR",
+                    "ERRO: AlunoDao.delete() "+
+                            ex.getMessage());
+        }
         return 0;
     }
 
     @Override
     public ArrayList<Aluno> getAll() {
+        ArrayList lista = new ArrayList<>();
+        try{
+            //SELECT * FROM ALUNO
+            Cursor cursor = baseDados.query(tabela,
+                    colunas, null, null,
+                    null, null, colunas[0]);
+
+            while(cursor.moveToNext()){
+                Aluno aluno = new Aluno();
+                aluno.setRa(cursor.getInt(0));
+                aluno.setNome(cursor.getString(1));
+
+                lista.add(aluno);
+            }
+
+            cursor.close();
+            return lista;
+
+        }catch (SQLException ex){
+            Log.e("UNIPAR",
+                    "ERRO: AlunoDao.getAll() "+
+                            ex.getMessage());
+        }
+
         return null;
     }
 
     @Override
     public Aluno getById(int id) {
+        try{
+            String[]identificador =
+                    {String.valueOf(id)};
+
+            Cursor cursor = baseDados.query(tabela,
+                    colunas, colunas[0]+" = ?",
+                    identificador,
+                    null, null, null);
+
+            if(cursor.moveToFirst()){
+                Aluno aluno = new Aluno();
+                aluno.setRa(cursor.getInt(0));
+                aluno.setNome(cursor.getString(1));
+
+                cursor.close();
+                return aluno;
+            }
+        }catch (SQLException ex){
+            Log.e("UNIPAR",
+                    "ERRO: AlunoDao.getById() "+
+                            ex.getMessage());
+        }
         return null;
     }
 }
