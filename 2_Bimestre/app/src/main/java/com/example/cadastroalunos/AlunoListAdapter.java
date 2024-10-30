@@ -43,6 +43,9 @@ public class AlunoListAdapter extends
         return new ViewHolder(listItem);
     }
 
+    /**
+     * Método responsável em escrever os dados no layout
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Aluno aluno = listaAlunos.get(position);
