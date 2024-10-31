@@ -1,4 +1,4 @@
-package com.example.cadastroalunos;
+package com.example.cadastroalunos.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.cadastroalunos.R;
 import com.example.cadastroalunos.model.Aluno;
 
 import java.util.ArrayList;
