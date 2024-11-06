@@ -3,7 +3,9 @@ package com.example.cadastroalunos.view;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -82,20 +84,84 @@ public class AlunoActivity extends AppCompatActivity {
 
         builder.setTitle("CADASTRO DE ALUNO"); //setando o titulo da tela
         builder.setView(viewCadastro); //setando o layout carregado
-        builder.setCancelable(false);//não deixa o popu fechar ao clicar fora
+        builder.setCancelable(false);//não deixa o popup fechar ao clicar fora
 
+        //Adicionando o botão cancelar, que fechará o dialog
         builder.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
+                dialog.dismiss();
             }
         });
+
+        //Adicionando o botão salvar
+        //nesse ponto nào vamos adicionar o método
+        //onclick, pois é necessário que os EditTexts
+        // da tela estejam criados, e nesse momento
+        //não estão criados
         builder.setPositiveButton("SALVAR", null);
+
+        //Cria o dialog com o layout e os campos carrgados
         dialog = builder.create();
+
+        //Após carregar o dialog precisamos adicionar
+        // o método onClickListener no no botão SALVAR
+        // agora os EditTexts estão criados em memória
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button bt = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                bt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        salvarDados();
+                    }
+                });
+            }
+        });
+
+        //Exibe o dialog na tela
         dialog.show();
 
+    }
 
+    private void salvarDados(){
+        //Envia os dados de ra e nome
+        //para gravar o aluno, validando
+        //os campos e se existe o aluno cadastrado
+        String retorno = controller
+                .salvarAluno(edRa.getText().toString(),
+                        edNome.getText().toString());
 
+        //Informa o erro caso no campo RA
+        // tenha problema
+        //com o RA do aluno
+        if(retorno.contains("RA")){
+            edRa.setError(retorno);
+            edRa.requestFocus();
+            return;
+        }
+
+        //Informa o erro no campo Nome
+        // caso tenha algum problema com
+        //nome do aluno
+        if(retorno.contains("NOME")){
+            edNome.setError(retorno);
+            edNome.requestFocus();
+            return;
+        }
+
+        //Ao gravar o aluno atualiza a lista
+        //e fecha o dialog
+        if(retorno.contains("sucesso")){
+            atualizarListaAlunos();
+            dialog.dismiss();
+        }
+
+        //Exibe mensagem
+        Toast.makeText(this,
+                retorno,
+                Toast.LENGTH_LONG).show();
     }
 
 
